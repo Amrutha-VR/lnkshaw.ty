@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "rewrites": [
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ],
+  "env": {
+    "VITE_API_BASE_URL": "https://your-backend.onrender.com/api",
+    "VITE_APP_URL":      "https://your-backend.onrender.com"
+  }
+}

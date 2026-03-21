@@ -1,0 +1,32 @@
+# render.yaml — Deploy backend to Render.com
+# Place this in the /backend directory or root
+
+services:
+  - type: web
+    name: linksnap-backend
+    env: node
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false       # Set in Render dashboard
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        value: https://your-app.vercel.app
+      - key: APP_URL
+        value: https://your-backend.onrender.com
+      - key: BCRYPT_SALT_ROUNDS
+        value: "12"

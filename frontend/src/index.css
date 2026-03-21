@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    background-color: #f5f0e8;
+    color: #0a0a0a;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  ::selection {
+    background: #c8102e;
+    color: #fff;
+  }
+}
+
+@layer components {
+
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           px-6 py-3 font-label font-bold text-sm tracking-wider uppercase
+           bg-ink text-paper
+           border-3 border-ink
+           hover:bg-accent hover:border-accent
+           transition-colors duration-150
+           disabled:opacity-40 disabled:cursor-not-allowed;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2
+           px-6 py-3 font-label font-bold text-sm tracking-wider uppercase
+           bg-transparent text-ink
+           border-3 border-ink
+           hover:bg-ink hover:text-paper
+           transition-colors duration-150
+           disabled:opacity-40 disabled:cursor-not-allowed;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           px-4 py-2 font-label text-sm tracking-wider uppercase
+           text-muted hover:text-ink hover:bg-rule/30
+           transition-colors duration-150;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+
+  /* ── Inputs ── */
+  .input-field {
+    @apply w-full px-4 py-3
+           bg-offwhite text-ink
+           border-b-3 border-rule
+           font-body text-sm
+           outline-none
+           transition-colors duration-150
+           focus:border-ink
+           placeholder:text-muted/60;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+  }
+
+  /* ── Cards ── */
+  .card {
+    @apply bg-offwhite border-3 border-ink;
+  }
+
+  .card-hover {
+    @apply card hover:-translate-y-0.5 hover:shadow-[4px_4px_0_#0a0a0a]
+           transition-all duration-150;
+  }
+
+  /* ── Badges ── */
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 text-xs font-label font-bold tracking-wider uppercase border;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+  .badge-red    { @apply badge bg-accent text-white border-accent; }
+  .badge-ink    { @apply badge bg-ink text-paper border-ink; }
+  .badge-outline{ @apply badge bg-transparent text-ink border-ink; }
+
+  /* ── Rule lines ── */
+  .rule-x { @apply border-t-3 border-ink; }
+  .rule-x-thin { @apply border-t border-rule; }
+
+  /* ── Skeleton ── */
+  .skeleton {
+    @apply bg-rule/50 animate-pulse;
+  }
+
+  /* ── Label / kicker ── */
+  .kicker {
+    @apply font-label text-xs font-bold tracking-[0.15em] uppercase text-muted;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+}
+
+/* ── Page enter ── */
+.page-enter { animation: fadeUp 0.35s ease-out; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #f5f0e8; }
+::-webkit-scrollbar-thumb { background: #0a0a0a; }
+
+/* ── Ticker tape ── */
+.ticker-wrap { overflow: hidden; white-space: nowrap; }
+.ticker-inner { display: inline-block; animation: ticker 22s linear infinite; }
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
