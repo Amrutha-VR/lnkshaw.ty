@@ -4,13 +4,11 @@
 
 **🎥 Demo Video:** [Insert your Loom/YouTube link here]
 
-**🌐 Live Demo:** [Insert your deployed URL here]
-
 ---
 
 ## 📋 Project Description
 
-LnkShaw.ty is a production-grade URL shortener built for the Katomaran Hackathon. Users sign up, paste long URLs, and get short trackable links instantly. Every click is recorded with device, browser, geolocation, and timestamp data — all visualized in a clean analytics dashboard.
+LnkShaw.ty is a production-grade URL shortener built for the Katomaran Hackathon. Users sign up, paste long URLs, and get short trackable links instantly. Every click is recorded with device, browser, geolocation, and timestamp data all visualized in a clean analytics dashboard.
 
 ---
 
@@ -128,7 +126,7 @@ Build a self-hosted shortener where:
 
 ### Step 1 — Clone
 ```bash
-git clone https://github.com/YOUR_USERNAME/lnkshawty.git
+git clone https://github.com/Amrutha_VR/lnkshawty.git
 cd lnkshawty
 ```
 
