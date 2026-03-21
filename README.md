@@ -1,329 +1,252 @@
-# 🔗 LinkSnap — URL Shortener with Analytics
+# LnkShaw.ty — URL Shortener with Analytics
 
-> A production-grade, full-stack URL shortener with real-time analytics, Google OAuth, QR code generation, and a beautiful Gold + Pink dashboard.
+> A full-stack URL shortener with real-time analytics, Google OAuth, QR code generation, custom aliases, and an editorial-style dashboard.
 
-**This project is a part of a hackathon run by https://katomaran.com**
+**🎥 Demo Video:** [Insert your Loom/YouTube link here]
+
+**🌐 Live Demo:** [Insert your deployed URL here]
+
+---
+
+## 📋 Project Description
+
+LnkShaw.ty is a production-grade URL shortener built for the Katomaran Hackathon. Users sign up, paste long URLs, and get short trackable links instantly. Every click is recorded with device, browser, geolocation, and timestamp data — all visualized in a clean analytics dashboard.
+
+---
+
+## 🗺️ Planning the App
+
+### Problem
+Long URLs are ugly, untrackable, and hard to share. Existing shorteners give you no ownership or analytics control.
+
+### Solution
+Build a self-hosted shortener where:
+- Users own their links
+- Every click is tracked in detail
+- Analytics are visualized clearly
+- Links can expire, have custom aliases, and generate QR codes
+
+### Planning Steps
+1. Define user stories — who uses this and why
+2. Design database schema — Users, URLs, Visits
+3. Plan all API endpoints — auth, CRUD, analytics, redirect
+4. Design frontend routes — landing, login, signup, dashboard, analytics
+5. Security checklist — hashing, JWT, rate limiting, sanitization
+6. Build order — backend → frontend → integration → styling
 
 ---
 
 ## ✨ Features
 
-- **URL Shortening** — Generate short codes (nanoid) or custom aliases
-- **Analytics** — Click counts, device/browser/OS/country breakdown, daily trends
-- **Google OAuth** — One-click sign-in via Google
-- **QR Code** — Auto-generated for every link, downloadable
-- **Expiry Dates** — Set links to auto-expire
-- **Bulk Upload** — Import up to 100 URLs via CSV
-- **Edit Links** — Update destination URL, title, or expiry
-- **Public Analytics** — Share a public stats page for any link
-- **JWT Auth** — Secure access + refresh token rotation
-- **Rate Limiting** — Brute-force and DDoS protection
-- **Responsive** — Works beautifully on mobile and desktop
+### Mandatory
+| Feature | Description |
+|---|---|
+| User signup and login | Email/password with bcrypt hashing |
+| Protected routes | JWT middleware on all dashboard routes |
+| URL ownership | Users only see and edit their own links |
+| URL shortening | nanoid generates unique 7-char codes |
+| Unique short codes | Collision detection before saving |
+| Server-side redirect | Backend 302 redirect |
+| URL validation | Frontend + backend validation |
+| Dashboard | Full link management UI |
+| Original URL, Short URL, Created date, Total clicks | All shown per link |
+| Delete URL | Soft delete (preserves analytics history) |
+| Copy short URL | One-click clipboard copy with confirmation |
+| Click counting | Incremented on every redirect |
+| Visit timestamps | Stored per visit in analytics collection |
+| Analytics page | Per-link detailed breakdown |
+| Total click count | Shown prominently |
+| Last visited time | Shown in analytics |
+| Recent visit history | Table of last 20 visits |
+| Responsive design | Mobile and desktop |
+| Loading / error / success states | Everywhere |
+| Form validation | Real-time and on submit |
+
+### Bonus Features
+| Feature | Description |
+|---|---|
+| Google OAuth | Passport.js Google OAuth2 |
+| Custom aliases | User-defined short codes |
+| QR code generation | Auto-generated PNG per link |
+| Expiry dates | Links stop working after set date |
+| Geolocation tracking | Country + city via geoip-lite |
+| Device tracking | Mobile / tablet / desktop |
+| Browser + OS tracking | Chrome, Safari, Windows, Android etc |
+| Daily click charts | 30-day area chart via Recharts |
+| Public stats page | Shareable — no login needed |
+| Edit destination URL | Change where a link points |
+| Bulk CSV upload | Create up to 100 links from one file |
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                  CLIENT (React + Vite)                   │
+│  Landing → Login/Signup → Dashboard → Analytics         │
+│  AuthContext (JWT) → Axios → REST API calls             │
+└────────────────────────┬────────────────────────────────┘
+                         │ HTTP / REST
+┌────────────────────────▼────────────────────────────────┐
+│               BACKEND (Node.js + Express)                │
+│                                                          │
+│  /api/auth      → Auth Controller (JWT + Google OAuth)  │
+│  /api/urls      → URL Controller (CRUD + CSV upload)    │
+│  /api/analytics → Analytics Controller (aggregations)   │
+│  /:shortCode    → Redirect Controller (302 + tracking)  │
+│                                                          │
+│  Middleware: Helmet · CORS · Rate Limiter               │
+│             Validation · Auth Guard · Ownership Check   │
+└────────────────────────┬────────────────────────────────┘
+                         │ Mongoose ODM
+┌────────────────────────▼────────────────────────────────┐
+│                    MongoDB Atlas                          │
+│                                                          │
+│  users   → Auth data, hashed passwords, OAuth IDs       │
+│  urls    → Short codes, original URLs, click counts     │
+│  visits  → Per-click analytics (device, geo, time)      │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Database Schema
+
+**Users:** `_id, name, email, password (bcrypt), googleId, avatar, authProvider, role, loginAttempts, lockUntil, refreshToken, createdAt`
+
+**URLs:** `_id, originalUrl, shortCode (unique indexed), userId, title, clickCount, expiresAt, isActive, isCustomAlias, qrCode, lastVisitedAt, createdAt`
+
+**Visits:** `_id, urlId, shortCode, userId, ipAddress (anonymized), country, city, deviceType, browser, os, referrer, visitDate, visitHour, createdAt`
+
+---
+
+## 🚀 Setup Instructions
+
+### Prerequisites
+- Node.js v18+
+- MongoDB Atlas free account
+- Google Cloud Console project
+
+### Step 1 — Clone
+```bash
+git clone https://github.com/YOUR_USERNAME/lnkshawty.git
+cd lnkshawty
+```
+
+### Step 2 — Backend
+```bash
+cd backend
+npm install
+cp .env.example .env
+# Fill in .env with your MongoDB URI, JWT secrets, Google OAuth keys
+npm run dev
+```
+
+### Step 3 — Frontend
+```bash
+cd frontend
+npm install
+cp .env.example .env
+# Set VITE_API_BASE_URL=http://localhost:5000/api
+# Set VITE_APP_URL=http://localhost:5000
+npm run dev
+```
+
+### Step 4 — Open
+```
+http://localhost:5173
+```
+
+### Environment Variables (backend)
+```env
+NODE_ENV=development
+PORT=5000
+MONGODB_URI=mongodb+srv://...
+JWT_SECRET=64_char_random_string
+JWT_REFRESH_SECRET=64_char_random_string
+GOOGLE_CLIENT_ID=your_client_id
+GOOGLE_CLIENT_SECRET=your_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback
+FRONTEND_URL=http://localhost:5173
+APP_URL=http://localhost:5000
+BCRYPT_SALT_ROUNDS=12
+SESSION_SECRET=any_random_string
+```
+
+---
+
+## 🔐 Security
+
+| Threat | Solution |
+|---|---|
+| Brute force | Rate limiting + account lockout after 5 attempts |
+| Weak passwords | Enforced regex validation |
+| NoSQL injection | express-mongo-sanitize |
+| XSS | Helmet CSP + xss library |
+| CSRF | sameSite:strict cookies + CORS whitelist |
+| Token theft | 15-min access tokens + HTTP-only refresh cookies |
+| Token reuse | Refresh token rotation on every use |
+| Dangerous URLs | http/https protocol allowlist |
+| Secrets | All in .env, never committed |
+| Ownership bypass | Middleware checks on every resource route |
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer        | Technology |
-|--------------|-----------|
-| Frontend     | React 18, Vite, Tailwind CSS, Framer Motion, Recharts |
-| Backend      | Node.js, Express, Passport.js |
-| Database     | MongoDB (Mongoose) |
-| Auth         | JWT (access + refresh), Google OAuth2 |
-| Security     | Helmet, bcrypt, rate limiting, input sanitization |
-| QR           | qrcode npm package |
-| Deployment   | Vercel (frontend) + Render (backend) |
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, Vite, Tailwind CSS, Framer Motion, Recharts |
+| Backend | Node.js, Express |
+| Database | MongoDB Atlas + Mongoose |
+| Auth | JWT + Google OAuth2 (Passport.js) |
+| Short codes | nanoid |
+| QR codes | qrcode |
+| Analytics | ua-parser-js + geoip-lite |
+| Security | Helmet, bcryptjs, express-rate-limit, express-mongo-sanitize, xss |
+
+---
+
+## 📌 Assumptions Made
+
+1. Users must be authenticated to create or manage links — no anonymous shortening
+2. Geolocation shows "Unknown" on localhost — works correctly on deployed version
+3. Redirect uses HTTP 302 so browsers don't cache it and analytics always record
+4. Analytics are recorded asynchronously — redirect speed is not affected
+5. IP addresses are partially anonymized (last octet removed) for privacy
+6. The short link domain is the backend URL (port 5000 locally)
+7. Refresh tokens are stored in the database to allow server-side logout
+8. CSV bulk upload is capped at 100 rows per upload to manage load
 
 ---
 
 ## 📁 Folder Structure
 
 ```
-linksnap/
-├── backend/
-│   ├── src/
-│   │   ├── config/
-│   │   │   ├── database.js        # MongoDB connection
-│   │   │   └── passport.js        # OAuth + JWT strategies
-│   │   ├── controllers/
-│   │   │   ├── auth.controller.js
-│   │   │   ├── url.controller.js
-│   │   │   ├── analytics.controller.js
-│   │   │   └── redirect.controller.js
-│   │   ├── middleware/
-│   │   │   ├── auth.middleware.js  # JWT protection + ownership
-│   │   │   ├── rateLimiter.js
-│   │   │   ├── validation.middleware.js
-│   │   │   └── errorHandler.js
-│   │   ├── models/
-│   │   │   ├── user.model.js
-│   │   │   ├── url.model.js
-│   │   │   └── analytics.model.js
-│   │   ├── routes/
-│   │   │   ├── auth.routes.js
-│   │   │   ├── url.routes.js
-│   │   │   ├── analytics.routes.js
-│   │   │   └── redirect.routes.js
-│   │   ├── utils/
-│   │   │   ├── jwt.utils.js
-│   │   │   ├── url.utils.js
-│   │   │   └── logger.js
-│   │   └── index.js               # App entry point
-│   ├── .env.example
-│   ├── render.yaml
-│   └── package.json
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   └── dashboard/
-│   │   │       ├── DashboardLayout.jsx
-│   │   │       ├── CreateUrlModal.jsx
-│   │   │       └── Modals.jsx     # QR, Edit, Bulk upload
-│   │   ├── contexts/
-│   │   │   └── AuthContext.jsx    # Global auth state
-│   │   ├── hooks/
-│   │   │   └── index.js           # useUrls, useAnalytics, useClipboard
-│   │   ├── pages/
-│   │   │   ├── LandingPage.jsx
-│   │   │   ├── LoginPage.jsx
-│   │   │   ├── SignupPage.jsx
-│   │   │   ├── DashboardPage.jsx
-│   │   │   ├── AnalyticsPage.jsx
-│   │   │   ├── PublicAnalyticsPage.jsx
-│   │   │   ├── OAuthCallbackPage.jsx
-│   │   │   ├── NotFoundPage.jsx
-│   │   │   └── ExpiredPage.jsx
-│   │   ├── services/
-│   │   │   ├── api.js             # Axios instance
-│   │   │   └── urlService.js      # API call functions
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── index.css              # Tailwind + custom classes
-│   ├── .env.example
-│   ├── vercel.json
-│   └── package.json
-│
-├── docs/
-│   └── API.md
-├── .gitignore
-└── README.md
+lnkshawty/
+├── backend/src/
+│   ├── config/         # MongoDB + Passport.js setup
+│   ├── controllers/    # Auth, URL, Analytics, Redirect logic
+│   ├── middleware/     # Auth guard, rate limiter, validation
+│   ├── models/         # User, URL, Visit Mongoose schemas
+│   ├── routes/         # Express route definitions
+│   └── utils/          # JWT helpers, URL utils, Logger
+├── frontend/src/
+│   ├── components/     # Dashboard layout, modals
+│   ├── contexts/       # AuthContext — global auth state
+│   ├── hooks/          # useUrls, useAnalytics, useClipboard
+│   ├── pages/          # All page components
+│   └── services/       # Axios API service layer
+└── docs/API.md         # Full REST API documentation
 ```
 
 ---
 
-## 🚀 Local Setup (Step by Step)
+## 🎥 Demo Video
 
-### Prerequisites
-- Node.js v18+
-- MongoDB Atlas account (or local MongoDB)
-- Google Cloud Console project (for OAuth)
-- VSCode
+[Insert your Loom or YouTube link here]
+
+The video demonstrates: signup, creating short links, the redirect working, analytics charts, QR code download, bulk CSV upload, Google OAuth, and the public analytics page.
 
 ---
 
-### Step 1 — Clone and Install
-
-```bash
-git clone https://github.com/yourname/linksnap.git
-cd linksnap
-
-# Install backend dependencies
-cd backend && npm install
-
-# Install frontend dependencies
-cd ../frontend && npm install
-```
-
----
-
-### Step 2 — Backend Environment
-
-```bash
-cd backend
-cp .env.example .env
-```
-
-Edit `.env` with your values:
-
-```env
-MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/linksnap
-JWT_SECRET=your-64-char-random-secret
-JWT_REFRESH_SECRET=your-other-64-char-random-secret
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback
-FRONTEND_URL=http://localhost:5173
-APP_URL=http://localhost:5000
-```
-
-**Generating strong secrets:**
-```bash
-node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
-```
-
----
-
-### Step 3 — Google OAuth Setup
-
-1. Go to [console.cloud.google.com](https://console.cloud.google.com)
-2. Create a new project → Enable "Google+ API"
-3. Go to **Credentials** → **Create Credentials** → **OAuth Client ID**
-4. Application type: **Web application**
-5. Authorized redirect URIs:
-   - `http://localhost:5000/api/auth/google/callback` (dev)
-   - `https://your-backend.onrender.com/api/auth/google/callback` (prod)
-6. Copy **Client ID** and **Client Secret** to your `.env`
-
----
-
-### Step 4 — Frontend Environment
-
-```bash
-cd frontend
-cp .env.example .env
-```
-
-```env
-VITE_API_BASE_URL=http://localhost:5000/api
-VITE_APP_URL=http://localhost:5000
-```
-
----
-
-### Step 5 — Run Development Servers
-
-**Terminal 1 — Backend:**
-```bash
-cd backend
-npm run dev
-# → Server on http://localhost:5000
-```
-
-**Terminal 2 — Frontend:**
-```bash
-cd frontend
-npm run dev
-# → App on http://localhost:5173
-```
-
-Open [http://localhost:5173](http://localhost:5173) 🎉
-
----
-
-## 🔒 Security Architecture
-
-| Threat | Protection |
-|--------|-----------|
-| Password brute force | Rate limiting (10 req/15min on auth) + account lockout after 5 failures |
-| SQL/NoSQL injection | `express-mongo-sanitize` + Mongoose schema validation |
-| XSS | Helmet CSP headers + `xss` library sanitization |
-| CSRF | `sameSite: strict` cookies + CORS whitelist |
-| Token theft | Short-lived access tokens (15min) + HTTP-only refresh cookies |
-| Session fixation | Refresh token rotation on every refresh |
-| Dangerous URLs | Protocol allowlist (http/https only) |
-| DDoS | `express-rate-limit` + `express-slow-down` |
-| Secrets exposure | `.env` files, never committed to git |
-| Ownership bypass | Ownership check middleware on all resource routes |
-
----
-
-## ☁️ Deployment
-
-### Deploy Backend to Render
-
-1. Push code to GitHub
-2. Go to [render.com](https://render.com) → New → Web Service
-3. Connect your GitHub repo
-4. Settings:
-   - **Root Directory:** `backend`
-   - **Build Command:** `npm install`
-   - **Start Command:** `npm start`
-5. Add all environment variables in the Render dashboard
-6. Deploy!
-
-### Deploy Frontend to Vercel
-
-1. Go to [vercel.com](https://vercel.com) → New Project
-2. Import your GitHub repo
-3. Settings:
-   - **Root Directory:** `frontend`
-   - **Framework:** Vite
-4. Add environment variables:
-   - `VITE_API_BASE_URL` = `https://your-backend.onrender.com/api`
-   - `VITE_APP_URL` = `https://your-backend.onrender.com`
-5. Deploy!
-
-6. Update your backend `.env` `FRONTEND_URL` with your Vercel URL
-7. Update Google OAuth authorized URIs with your Render backend URL
-
----
-
-## 📊 Database Schema
-
-### Users
-```
-_id, name, email, password (hashed), googleId, avatar,
-authProvider, isVerified, role, loginAttempts, lockUntil,
-lastLoginAt, refreshToken, createdAt, updatedAt
-```
-
-### URLs
-```
-_id, originalUrl, shortCode (unique, indexed), userId (indexed),
-title, clickCount, expiresAt (indexed), isActive, isCustomAlias,
-qrCode, lastVisitedAt, createdAt, updatedAt
-```
-
-### Visits (Analytics)
-```
-_id, urlId (indexed), shortCode (indexed), userId,
-ipAddress (anonymized), country, city, deviceType,
-browser, os, referrer, userAgent, visitDate (indexed),
-visitHour, createdAt
-```
-
----
-
-## 🏗️ Architecture Decisions
-
-- **Soft delete** on URLs (isActive: false) preserves analytics history
-- **Refresh token rotation** — each refresh invalidates the previous token
-- **Denormalized clickCount** on URL document for fast dashboard queries without aggregation
-- **Non-blocking analytics** — redirect happens instantly, analytics recorded async
-- **IP anonymization** — only first 3 octets stored (privacy compliance)
-- **nanoid** for short codes — URL-safe, no ambiguous characters, collision-resistant
-- **QR codes stored as base64** to avoid regenerating on every request
-
----
-
-## 🎥 Loom Demo Script
-
-**Record a ~3 minute demo covering:**
-
-1. **Open landing page** — show the beautiful UI, explain what the app does (30s)
-2. **Sign up** with email, show password strength checker (20s)
-3. **Create a short URL** with a custom alias and expiry date (30s)
-4. **Show the dashboard** — copy button, QR code, edit modal (30s)
-5. **Click the short link** in a new tab — show the redirect (10s)
-6. **Open analytics** — show the charts, device breakdown, country map, recent visits (45s)
-7. **Bulk CSV upload** — drag and drop CSV, show results (20s)
-8. **Sign in with Google** — show OAuth flow (15s)
-9. **Public analytics page** — show shareable stats URL (10s)
-
-**Pro tip:** Use a URL that already has some clicks (visit it a few times yourself before recording) so the charts look populated!
-
----
-
-## 📝 Assumptions
-
-- Users must be authenticated to create/manage URLs (no anonymous shortening)
-- Geolocation is best-effort (local/private IPs won't resolve to a country)
-- QR codes are generated server-side and cached in the database
-- CSV bulk upload processes rows sequentially (not in parallel) to manage DB load
-- Refresh tokens are stored in the database (not as signed cookies) to enable logout/revocation
-- The app URL (for short links) is the backend URL, not the frontend URL
-
----
-
-*Built with 💛 for the Katomaran Hackathon*
+> This project is a part of a hackathon run by https://katomaran.com
