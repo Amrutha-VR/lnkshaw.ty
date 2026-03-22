@@ -3,7 +3,7 @@
 > A full-stack URL shortener with real-time analytics, Google OAuth, QR code generation, custom aliases, and an editorial-style dashboard.
 
 **🎥 Demo Video:** 
-[Watch the video](https://www.loom.com/share/510db4b3d41548989b110ee15ce3ced4)
+[click here](https://www.loom.com/share/510db4b3d41548989b110ee15ce3ced4)
 ---
 
 ## 📋 Project Description
