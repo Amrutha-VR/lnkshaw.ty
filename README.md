@@ -4,13 +4,13 @@
 
 ---
 
-## 📋 Project Description
+## Project Description
 
 LnkShaw.ty is a production-grade URL shortener built for the Katomaran Hackathon. Users sign up, paste long URLs, and get short trackable links instantly. Every click is recorded with device, browser, geolocation, and timestamp data all visualized in a clean analytics dashboard.
 
 ---
 
-## 🗺️ Planning the App
+##  Planning the App
 
 ### Problem
 Long URLs are ugly, untrackable, and hard to share. Existing shorteners give you no ownership or analytics control.
@@ -32,7 +32,7 @@ Build a self-hosted shortener where:
 
 ---
 
-## ✨ Features
+##  Features
 
 ### Mandatory
 | Feature | Description |
@@ -75,7 +75,7 @@ Build a self-hosted shortener where:
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -115,7 +115,7 @@ Build a self-hosted shortener where:
 
 ---
 
-## 🚀 Setup Instructions
+## Setup Instructions
 
 ### Prerequisites
 - Node.js v18+
@@ -170,7 +170,7 @@ SESSION_SECRET=any_random_string
 
 ---
 
-## 🔐 Security
+##  Security
 
 | Threat | Solution |
 |---|---|
@@ -187,7 +187,7 @@ SESSION_SECRET=any_random_string
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -202,7 +202,7 @@ SESSION_SECRET=any_random_string
 
 ---
 
-## 📌 Assumptions Made
+##  Assumptions Made
 
 1. Users must be authenticated to create or manage links — no anonymous shortening
 2. Geolocation shows "Unknown" on localhost — works correctly on deployed version
@@ -215,7 +215,7 @@ SESSION_SECRET=any_random_string
 
 ---
 
-## 📁 Folder Structure
+##  Folder Structure
 
 ```
 lnkshawty/
@@ -237,7 +237,7 @@ lnkshawty/
 
 ---
 
-## 🎥 Demo Video
+##  Demo Video
 
 [click here](https://www.loom.com/share/510db4b3d41548989b110ee15ce3ced4)
 
