@@ -2,8 +2,6 @@
 
 > A full-stack URL shortener with real-time analytics, Google OAuth, QR code generation, custom aliases, and an editorial-style dashboard.
 
-**🎥 Demo Video:** 
-[click here](https://www.loom.com/share/510db4b3d41548989b110ee15ce3ced4)
 ---
 
 ## 📋 Project Description
@@ -241,7 +239,7 @@ lnkshawty/
 
 ## 🎥 Demo Video
 
-[Insert your Loom or YouTube link here]
+[click here](https://www.loom.com/share/510db4b3d41548989b110ee15ce3ced4)
 
 The video demonstrates: signup, creating short links, the redirect working, analytics charts, QR code download, bulk CSV upload, Google OAuth, and the public analytics page.
 
