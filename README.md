@@ -1,4 +1,4 @@
-# LnkShaw.ty — URL Shortener with Analytics
+# LnkShaw.ty - URL Shortener with Analytics
 
 > A full-stack URL shortener with real-time analytics, Google OAuth, QR code generation, custom aliases, and an editorial-style dashboard.
 
