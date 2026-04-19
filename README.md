@@ -245,4 +245,3 @@ The video demonstrates: signup, creating short links, the redirect working, anal
 
 ---
 
-> This project is a part of a hackathon run by https://katomaran.com
