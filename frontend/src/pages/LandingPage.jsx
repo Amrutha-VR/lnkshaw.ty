@@ -177,12 +177,7 @@ export default function LandingPage() {
             style={{ fontFamily: "'Playfair Display', serif" }}>
             LnkShaw<span className="text-accent">.ty</span>
           </span>
-          <span className="kicker text-paper/40 text-xs">
-            This project is a part of a hackathon run by{' '}
-            <a href="https://katomaran.com" className="text-accent hover:underline" target="_blank" rel="noreferrer">
-              katomaran.com
-            </a>
-          </span>
+         
         </div>
       </footer>
     </div>
