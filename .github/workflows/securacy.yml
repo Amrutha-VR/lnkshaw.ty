@@ -1,0 +1,69 @@
+# SecuracyAI Gate: checks the code against the project's threat model.
+# Claude Code reads the code here, in your CI, with your model key.
+# Securacy gets only its report: rule IDs, statuses and file locations.
+# Docs: https://platform.securacy.ai/home/settings?section=cicd
+name: SecuracyAI Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read          # read the code
+  pull-requests: write    # post the result as a PR comment
+  issues: read            # see who added the securacy-override label
+  security-events: write  # upload SARIF to code scanning
+  actions: read           # the Claude Code step reads its own workflow run
+
+concurrency:
+  group: securacy-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  threat-check:
+    name: SecuracyAI Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0      # the agent reads the change with git diff
+      - name: SecuracyAI Gate
+        id: securacy
+        uses: securacy/gate@v1
+        with:
+          api-key: ${{ secrets.SECURACY_CI_KEY }}
+          server-url: "https://api.securacy.ai"
+          agent: "claude"
+          agent-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude-oauth-token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}   # or a Pro/Max subscription
+      - name: Upload to GitHub code scanning
+        if: always() && steps.securacy.outputs.sarif-file != ''
+        continue-on-error: true   # private repos need GitHub Code Security for this step
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.securacy.outputs.sarif-file }}
+          category: securacy
+
+  # Securacy regenerates the guardrail files when the rule state changes.
+  # This job opens a pull request with them; nothing else writes to the repo.
+  guardrails:
+    name: SecuracyAI Gate guardrails
+    needs: threat-check
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: SecuracyAI Gate guardrails
+        uses: securacy/gate@v1
+        with:
+          command: sync-guardrails
+          api-key: ${{ secrets.SECURACY_CI_KEY }}
+          server-url: "https://api.securacy.ai"
